@@ -1,6 +1,8 @@
 // app/auth/page.tsx
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabaseBrowserClient } from '@/library/supabase/client'
