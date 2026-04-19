@@ -125,6 +125,27 @@ export default function ArticlesPage() {
     setNotifications(prev => [...prev, `You replied to a comment on "${sampleArticles.find(a => a.id === articleId)?.title}"`])
   }
 
+  const handleComment = (articleId: number) => {
+    const commentText = (newComments[articleId] || '').trim()
+    if (!commentText) return
+
+    const newComment: Comment = {
+      id: Date.now(),
+      text: commentText,
+      author: "You",
+      date: new Date().toISOString().split('T')[0],
+      replies: []
+    }
+
+    setComments(prev => ({
+      ...prev,
+      [articleId]: [...(prev[articleId] || []), newComment]
+    }))
+    setNewComments(prev => ({ ...prev, [articleId]: '' }))
+
+    setNotifications(prev => [...prev, `You commented on "${sampleArticles.find(a => a.id === articleId)?.title}"`])
+  }
+
   const startReply = (articleId: number, commentId: number) => {
     setReplyingTo({ articleId, commentId })
   }
