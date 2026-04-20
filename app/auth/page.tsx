@@ -21,24 +21,36 @@ export default function AuthPage() {
     setLoading(true)
     setMessage(null)
 
-    const { data, error } = await supabaseBrowserClient.auth.signUp({
-      email,
-      password,
-    })
+    try {
+      const { data, error } = await supabaseBrowserClient.auth.signUp({
+        email,
+        password,
+      })
 
-    if (error) {
-      setMessage({ type: 'error', text: error.message })
-      clearMessage()
-    } else if (data.user) {
+      if (error) {
+        setMessage({ type: 'error', text: error.message })
+        clearMessage()
+      } else if (data.user) {
+        setMessage({
+          type: 'success',
+          text: 'Account created successfully! You can now log in.',
+        })
+        clearMessage()
+        // Clear password field after successful signup
+        setPassword('')
+      } else {
+        setMessage({ type: 'error', text: 'Sign-up failed. Please try again.' })
+        clearMessage()
+      }
+    } catch (error) {
       setMessage({
-        type: 'success',
-        text: 'Account created successfully! You can now log in.',
+        type: 'error',
+        text: 'Unable to create account. Please try again later.',
       })
       clearMessage()
-      // Clear password field after successful signup
-      setPassword('')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -46,21 +58,33 @@ export default function AuthPage() {
     setLoading(true)
     setMessage(null)
 
-    const { data, error } = await supabaseBrowserClient.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { data, error } = await supabaseBrowserClient.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (error) {
-      setMessage({ type: 'error', text: error.message })
+      if (error) {
+        setMessage({ type: 'error', text: error.message })
+        clearMessage()
+      } else if (data.user) {
+        setMessage({ type: 'success', text: 'Login successful! Redirecting...' })
+        clearMessage()
+        // Redirect to dashboard after successful login
+        setTimeout(() => router.push('/dashboard'), 1000)
+      } else {
+        setMessage({ type: 'error', text: 'Login failed. Check your credentials and try again.' })
+        clearMessage()
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'Unable to log in. Please try again later.',
+      })
       clearMessage()
-    } else if (data.user) {
-      setMessage({ type: 'success', text: 'Login successful! Redirecting...' })
-      clearMessage()
-      // Redirect to dashboard after successful login
-      setTimeout(() => router.push('/dashboard'), 1000)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
