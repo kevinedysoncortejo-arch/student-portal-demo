@@ -83,7 +83,7 @@ export default function AuthPage() {
           </div>
         )}
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleLogin}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -126,8 +126,7 @@ export default function AuthPage() {
               {loading ? 'Please wait...' : 'Sign Up'}
             </button>
             <button
-              type="button"
-              onClick={handleLogin}
+              type="submit"
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
