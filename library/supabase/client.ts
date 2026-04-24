@@ -9,12 +9,9 @@ let browserClient: ReturnType<typeof createBrowserClient> | null = null
 // For client components - lazy-load to avoid build-time initialization
 export function getSupabaseBrowserClient() {
   if (!browserClient) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.')
-    }
+    // Use environment variables if available, otherwise use fallback values
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nmrzefqzvodzrpomhulo.supabase.co'
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tcnplZnF6dm9kenJwb21odWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTY2MDQsImV4cCI6MjA5MTczMjYwNH0.qBCVEIV0wNdSPb-pNjTZLWpH5kA2BvTbb-zes-Bxxco'
 
     browserClient = createBrowserClient(supabaseUrl, supabaseKey)
   }
@@ -30,12 +27,9 @@ export const supabaseBrowserClient = new Proxy({} as ReturnType<typeof createBro
 
 // For server actions or API routes (if needed later)
 export const createSupabaseServerClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.')
-  }
+  // Use environment variables if available, otherwise use fallback values
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nmrzefqzvodzrpomhulo.supabase.co'
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tcnplZnF6dm9kenJwb21odWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTY2MDQsImV4cCI6MjA5MTczMjYwNH0.qBCVEIV0wNdSPb-pNjTZLWpH5kA2BvTbb-zes-Bxxco'
 
   return createClient(supabaseUrl, supabaseKey)
 }
