@@ -22,12 +22,14 @@ export default function AuthPage() {
     setMessage(null)
 
     try {
-      const { data, error } = await getSupabaseBrowserClient().auth.signUp({
+      const client = getSupabaseBrowserClient()
+      const { data, error } = await client.auth.signUp({
         email,
         password,
       })
 
       if (error) {
+        console.error('Signup error:', error)
         setMessage({ type: 'error', text: error.message })
         clearMessage()
       } else if (data.user) {
@@ -43,9 +45,11 @@ export default function AuthPage() {
         clearMessage()
       }
     } catch (error) {
+      console.error('Signup exception:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
       setMessage({
         type: 'error',
-        text: 'Unable to create account. Please try again later.',
+        text: `Unable to create account: ${errorMessage}`,
       })
       clearMessage()
     } finally {
@@ -59,12 +63,14 @@ export default function AuthPage() {
     setMessage(null)
 
     try {
-      const { data, error } = await getSupabaseBrowserClient().auth.signInWithPassword({
+      const client = getSupabaseBrowserClient()
+      const { data, error } = await client.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
+        console.error('Login error:', error)
         setMessage({ type: 'error', text: error.message })
         clearMessage()
       } else if (data.user) {
@@ -77,9 +83,11 @@ export default function AuthPage() {
         clearMessage()
       }
     } catch (error) {
+      console.error('Login exception:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
       setMessage({
         type: 'error',
-        text: 'Unable to log in. Please try again later.',
+        text: `Unable to log in: ${errorMessage}`,
       })
       clearMessage()
     } finally {
