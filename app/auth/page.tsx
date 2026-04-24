@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabaseBrowserClient } from '@/library/supabase/client'
+import { getSupabaseBrowserClient } from '@/library/supabase/client'
 
 export default function AuthPage() {
   const router = useRouter()
@@ -22,7 +22,7 @@ export default function AuthPage() {
     setMessage(null)
 
     try {
-      const { data, error } = await supabaseBrowserClient.auth.signUp({
+      const { data, error } = await getSupabaseBrowserClient().auth.signUp({
         email,
         password,
       })
@@ -59,7 +59,7 @@ export default function AuthPage() {
     setMessage(null)
 
     try {
-      const { data, error } = await supabaseBrowserClient.auth.signInWithPassword({
+      const { data, error } = await getSupabaseBrowserClient().auth.signInWithPassword({
         email,
         password,
       })
