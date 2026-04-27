@@ -1,11 +1,11 @@
-// app/auth/page.tsx
+// app/auth/admin/page.tsx
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getSupabaseBrowserClient } from '@/library/supabase/client'
 
-export default function AuthPage() {
+export default function AdminAuthPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,57 +14,6 @@ export default function AuthPage() {
 
   const clearMessage = () => {
     setTimeout(() => setMessage(null), 5000)
-  }
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage(null)
-
-    try {
-      const client = getSupabaseBrowserClient()
-      const { data, error } = await client.auth.signUp({
-        email,
-        password,
-      })
-
-      if (error) {
-        console.error('Signup error:', error)
-        setMessage({ type: 'error', text: error.message })
-        clearMessage()
-      } else if (data.user) {
-        try {
-          await client.from('profiles').insert({
-            id: data.user.id,
-            email,
-            role: 'user',
-          })
-        } catch (profileError) {
-          console.warn('Could not create profile row:', profileError)
-        }
-
-        setMessage({
-          type: 'success',
-          text: 'Account created successfully! You can now log in.',
-        })
-        clearMessage()
-        // Clear password field after successful signup
-        setPassword('')
-      } else {
-        setMessage({ type: 'error', text: 'Sign-up failed. Please try again.' })
-        clearMessage()
-      }
-    } catch (error) {
-      console.error('Signup exception:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-      setMessage({
-        type: 'error',
-        text: `Unable to create account: ${errorMessage}`,
-      })
-      clearMessage()
-    } finally {
-      setLoading(false)
-    }
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -84,20 +33,40 @@ export default function AuthPage() {
         setMessage({ type: 'error', text: error.message })
         clearMessage()
       } else if (data.user) {
-        // Check if user is not admin (regular user)
+        // Check if user is admin
         const { data: profile } = await client
           .from('profiles')
           .select('role')
           .eq('id', data.user.id)
           .single()
 
-        if (profile?.role !== 'admin') {
-          setMessage({ type: 'success', text: 'Login successful! Redirecting...' })
+        if (profile?.role === 'admin') {
+          setMessage({ type: 'success', text: 'Admin login successful! Redirecting...' })
           clearMessage()
-          // Redirect to user dashboard after successful login
-          setTimeout(() => router.push('/dashboard'), 1000)
+          // Redirect to admin dashboard after successful login
+          setTimeout(() => router.push('/admin/dashboard'), 1000)
+        } else if (!profile) {
+          // Profile doesn't exist, create it with admin role
+          const { error: createError } = await client
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              email: data.user.email,
+              role: 'admin'
+            })
+
+          if (createError) {
+            console.error('Error creating admin profile:', createError)
+            setMessage({ type: 'error', text: 'Failed to create admin profile. Please contact support.' })
+            clearMessage()
+            await client.auth.signOut()
+          } else {
+            setMessage({ type: 'success', text: 'Admin account created and login successful! Redirecting...' })
+            clearMessage()
+            setTimeout(() => router.push('/admin/dashboard'), 1000)
+          }
         } else {
-          setMessage({ type: 'error', text: 'This login is for regular users only. Please use admin login.' })
+          setMessage({ type: 'error', text: 'Access denied. Admin privileges required.' })
           clearMessage()
           // Sign out the user
           await client.auth.signOut()
@@ -123,8 +92,8 @@ export default function AuthPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">User Login</h1>
-          <p className="text-gray-500 mt-2">Sign in to your account</p>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Login</h1>
+          <p className="text-gray-500 mt-2">Sign in to admin panel</p>
         </div>
 
         {message && (
@@ -142,15 +111,15 @@ export default function AuthPage() {
         <form className="space-y-5" onSubmit={handleLogin}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
+              Admin Email Address
             </label>
             <div>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="you@example.com"
+                className="w-full pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition"
+                placeholder="admin@example.com"
                 required
               />
             </div>
@@ -165,38 +134,30 @@ export default function AuthPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="w-full pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition"
                 placeholder="••••••••"
                 required
               />
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={handleSignUp}
-              disabled={loading}
-              className="flex-1 bg-gray-600 text-white py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Please wait...' : 'Sign Up'}
-            </button>
+          <div className="pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Please wait...' : 'Login'}
+              {loading ? 'Please wait...' : 'Admin Login'}
             </button>
           </div>
         </form>
 
         <div className="mt-6 text-center">
           <a
-            href="/auth/admin"
-            className="text-sm text-red-600 hover:text-red-800"
+            href="/auth"
+            className="text-sm text-blue-600 hover:text-blue-800"
           >
-            Admin Login
+            Regular User Login
           </a>
         </div>
       </div>
