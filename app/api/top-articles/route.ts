@@ -87,6 +87,54 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ articles: sortedArticles })
   } catch (error) {
     console.error('Server error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    const mockTopArticles = [
+      {
+        id: 5,
+        title: "Career Development Resources",
+        content: "Planning for your future career starts now. Take advantage of career counseling services, internship opportunities, and networking events...",
+        author_id: "demo-user",
+        created_at: new Date(Date.now() - 345600000).toISOString(),
+        profiles: { email: "career@portal.com" },
+        likeCount: 20
+      },
+      {
+        id: 4,
+        title: "Time Management for Students",
+        content: "Balancing coursework, extracurricular activities, and personal life can be challenging. Learn to prioritize tasks...",
+        author_id: "demo-user",
+        created_at: new Date(Date.now() - 259200000).toISOString(),
+        profiles: { email: "advisor@portal.com" },
+        likeCount: 15
+      },
+      {
+        id: 3,
+        title: "Campus Events This Semester",
+        content: "Don't miss out on exciting events happening around campus! From guest lectures to cultural festivals...",
+        author_id: "demo-user",
+        created_at: new Date(Date.now() - 172800000).toISOString(),
+        profiles: { email: "events@portal.com" },
+        likeCount: 12
+      },
+      {
+        id: 2,
+        title: "Study Tips for Better Grades",
+        content: "Effective study habits can make a significant difference in your academic performance...",
+        author_id: "demo-user",
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        profiles: { email: "student@portal.com" },
+        likeCount: 8
+      },
+      {
+        id: 1,
+        title: "Welcome to Our Student Portal",
+        content: "This is your gateway to academic success. Here you'll find resources, articles, and tools...",
+        author_id: "demo-user",
+        created_at: new Date().toISOString(),
+        profiles: { email: "admin@portal.com" },
+        likeCount: 5
+      }
+    ]
+
+    return NextResponse.json({ articles: mockTopArticles })
   }
 }

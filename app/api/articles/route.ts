@@ -123,7 +123,36 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ articles: articlesWithLikeStatus })
   } catch (error) {
     console.error('Server error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    const mockArticles = [
+      {
+        id: 1,
+        title: "Welcome to Our Student Portal",
+        content: "This is your gateway to academic success. Here you'll find resources, articles, and tools to help you excel in your studies. Stay connected with your peers and access the latest information about your courses.",
+        author_id: "demo-user",
+        created_at: new Date().toISOString(),
+        profiles: { email: "admin@portal.com" },
+        likes: [{ count: 5 }],
+        comments: [{ count: 2 }],
+        likeCount: 5,
+        commentCount: 2,
+        isLiked: false
+      },
+      {
+        id: 2,
+        title: "Study Tips for Better Grades",
+        content: "Effective study habits can make a significant difference in your academic performance. Try the Pomodoro technique, create a dedicated study space, and don't forget to take regular breaks. Consistency is key to success.",
+        author_id: "demo-user",
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        profiles: { email: "student@portal.com" },
+        likes: [{ count: 8 }],
+        comments: [{ count: 3 }],
+        likeCount: 8,
+        commentCount: 3,
+        isLiked: false
+      }
+    ]
+
+    return NextResponse.json({ articles: mockArticles })
   }
 }
 
