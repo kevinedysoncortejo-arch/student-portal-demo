@@ -20,6 +20,7 @@ interface Article {
 export default function LandingPage() {
   const [topArticles, setTopArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchTopArticles()
@@ -32,14 +33,18 @@ export default function LandingPage() {
 
       if (!response.ok) {
         console.error('Top articles endpoint returned error:', data)
+        setError('Unable to load top articles. Please try again later.')
         return
       }
 
       if (data.articles) {
         setTopArticles(data.articles)
+      } else {
+        setError('No articles were returned from the server.')
       }
     } catch (error) {
       console.error('Error fetching top articles:', error)
+      setError('Unable to load top articles. Please check your connection.')
     } finally {
       setLoading(false)
     }
@@ -81,6 +86,8 @@ export default function LandingPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Top 5 Most Liked Articles</h2>
           {loading ? (
             <div className="text-center py-8">Loading articles...</div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">{error}</div>
           ) : topArticles.length === 0 ? (
             <div className="text-center py-8 text-gray-500">No articles found.</div>
           ) : (

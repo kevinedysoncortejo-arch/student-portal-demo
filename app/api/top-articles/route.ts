@@ -2,9 +2,9 @@
 import { createSupabaseServerClient } from '@/library/supabase/server-client'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient(request)
 
     // Get articles with like counts, ordered by likes descending
     const { data: articles, error } = await supabase
