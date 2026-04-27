@@ -28,12 +28,15 @@ export default function LandingPage() {
 
   const fetchTopArticles = async () => {
     try {
-      const response = await fetch('/api/top-articles')
+      const response = await fetch('/api/top-articles', { cache: 'no-store' })
       const data = await response.json()
 
       if (!response.ok) {
         console.error('Top articles endpoint returned error:', data)
-        setError('Unable to load top articles. Please try again later.')
+        setError('Unable to load top articles. Showing fallback articles.')
+        if (data?.articles) {
+          setTopArticles(data.articles)
+        }
         return
       }
 
