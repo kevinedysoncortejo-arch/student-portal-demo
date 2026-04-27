@@ -36,6 +36,9 @@ export default function LandingPage() {
         setError('Unable to load top articles. Showing fallback articles.')
         if (data?.articles) {
           setTopArticles(data.articles)
+        } else {
+          // Generate random articles as fallback
+          setTopArticles(generateRandomArticles())
         }
         return
       }
@@ -44,13 +47,63 @@ export default function LandingPage() {
         setTopArticles(data.articles)
       } else {
         setError('No articles were returned from the server.')
+        setTopArticles(generateRandomArticles())
       }
     } catch (error) {
       console.error('Error fetching top articles:', error)
-      setError('Unable to load top articles. Please check your connection.')
+      setError('Unable to load top articles. Showing random articles.')
+      setTopArticles(generateRandomArticles())
     } finally {
       setLoading(false)
     }
+  }
+
+  const generateRandomArticles = (): Article[] => {
+    const titles = [
+      'The Future of Technology in Education',
+      'How to Master Programming Fundamentals',
+      'Building Scalable Web Applications',
+      'Machine Learning for Beginners',
+      'Cybersecurity Best Practices',
+      'Cloud Computing Essentials',
+      'Data Science with Python',
+      'Mobile App Development Trends',
+      'DevOps and Continuous Integration',
+      'Artificial Intelligence in Healthcare'
+    ]
+
+    const contents = [
+      'This article explores the latest advancements in technology and their impact on modern education systems.',
+      'Learn the core concepts of programming that every developer should master to build robust applications.',
+      'Discover the principles and patterns for creating web applications that can handle millions of users.',
+      'An introduction to machine learning algorithms and their practical applications in real-world scenarios.',
+      'Protect your digital assets with these essential cybersecurity practices and tools.',
+      'Understanding cloud computing platforms and how to leverage them for scalable solutions.',
+      'Master data analysis and visualization techniques using Python and its powerful libraries.',
+      'Stay ahead of the curve with the latest trends in mobile application development.',
+      'Implement efficient DevOps practices to streamline your development and deployment processes.',
+      'Explore how AI is revolutionizing healthcare with innovative solutions and predictive analytics.'
+    ]
+
+    const authors = [
+      'john.doe@example.com',
+      'jane.smith@example.com',
+      'bob.wilson@example.com',
+      'alice.johnson@example.com',
+      'charlie.brown@example.com'
+    ]
+
+    return Array.from({ length: 5 }, (_, i) => ({
+      id: i + 1,
+      title: titles[i % titles.length],
+      content: contents[i % contents.length],
+      author_id: `user-${i + 1}`,
+      created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      profiles: {
+        email: authors[i % authors.length]
+      },
+      likeCount: Math.floor(Math.random() * 100) + 1
+    }))
   }
 
   return (
