@@ -43,8 +43,8 @@ export default function AdminAuthPage() {
         if (profile?.role === 'admin') {
           setMessage({ type: 'success', text: 'Admin login successful! Redirecting...' })
           clearMessage()
-          // Redirect to admin dashboard after successful login
-          setTimeout(() => router.push('/admin/dashboard'), 1000)
+          // Redirect to admin articles management after successful login
+          setTimeout(() => router.push('/admin/dashboard/articles'), 1000)
         } else if (!profile) {
           // Profile doesn't exist, create it with admin role
           const { error: createError } = await client

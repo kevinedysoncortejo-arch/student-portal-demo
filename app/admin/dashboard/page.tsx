@@ -138,6 +138,26 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      <div className="bg-white shadow rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <a
+            href="/admin/dashboard/articles"
+            className="block rounded-lg border border-gray-200 p-5 hover:border-red-600 hover:bg-red-50 transition"
+          >
+            <p className="text-base font-semibold text-gray-900">Manage Articles</p>
+            <p className="mt-2 text-sm text-gray-600">Create, edit, and delete articles from the admin portal.</p>
+          </a>
+          <a
+            href="/admin/dashboard/users"
+            className="block rounded-lg border border-gray-200 p-5 hover:border-red-600 hover:bg-red-50 transition"
+          >
+            <p className="text-base font-semibold text-gray-900">Review Users</p>
+            <p className="mt-2 text-sm text-gray-600">View registered users and manage admin access.</p>
+          </a>
+        </div>
+      </div>
     </div>
   )
 }
