@@ -29,6 +29,12 @@ export default function LandingPage() {
     try {
       const response = await fetch('/api/top-articles')
       const data = await response.json()
+
+      if (!response.ok) {
+        console.error('Top articles endpoint returned error:', data)
+        return
+      }
+
       if (data.articles) {
         setTopArticles(data.articles)
       }

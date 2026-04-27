@@ -77,7 +77,9 @@ export async function GET() {
     const sortedArticles = articles
       .map(article => ({
         ...article,
-        likeCount: article.likes || 0
+        likeCount: Array.isArray(article.likes)
+          ? article.likes[0]?.count || 0
+          : article.likes || 0
       }))
       .sort((a, b) => b.likeCount - a.likeCount)
       .slice(0, 5)
